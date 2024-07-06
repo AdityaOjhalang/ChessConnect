@@ -33,11 +33,14 @@ export class Game {
 			//send error message
 			return;
 		}
+		console.log("Did not early return"); 
 		try { this.board.move(move); }
 		catch (e) {
 			//send error message
+			console.log(e);
 			return;
 		}
+		console.log("Move succeeded")
 		if (this.board.isGameOver()) {
 			//send game over message
 			this.player1.emit(JSON.stringify({
@@ -48,13 +51,11 @@ export class Game {
 
 		}
 		if (this.moves.length % 2 === 0) {
-			this.player2.emit(JSON.stringify({ type: MOVE, payload: move }));
+			
+			this.player2.send(JSON.stringify({ type: MOVE, payload: move }));
 		}
 		else {
-			this.player1.emit(JSON.stringify({ type: MOVE, payload: move }));
+			this.player1.send(JSON.stringify({ type: MOVE, payload: move }));
 		}
-
-		//check game is over
-		//send the updated board to both players 
 	}
 }
