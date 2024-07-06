@@ -9,6 +9,7 @@ export class Game {
 	private board: Chess;
 	private moves: string[];
 	private startTime: Date;
+	private moveCount = 0;
 
 
 	constructor(player1: WebSocket, player2: WebSocket) {
@@ -25,16 +26,20 @@ export class Game {
 		{ from: string, to: string, }
 	) {
 		//valdiation
-		if (this.board.moves.length % 2 === 0 && socket !== this.player1) {
+		if (this.moveCount % 2 === 0 && socket !== this.player1) {
+			console.log("Early return 1")
 			//send error message
 			return;
 		}
-		if (this.board.moves.length % 2 === 1 && socket !== this.player2) {
+		if (this.moveCount % 2 === 1 && socket !== this.player2) {
 			//send error message
 			return;
 		}
-		console.log("Did not early return"); 
-		try { this.board.move(move); }
+		console.log("Did not early return");
+		try {
+			this.board.move(move);
+			
+		}
 		catch (e) {
 			//send error message
 			console.log(e);
@@ -50,12 +55,13 @@ export class Game {
 			}))
 
 		}
-		if (this.moves.length % 2 === 0) {
-			
+		if (this.moveCount % 2 === 0) {
+
 			this.player2.send(JSON.stringify({ type: MOVE, payload: move }));
 		}
 		else {
 			this.player1.send(JSON.stringify({ type: MOVE, payload: move }));
 		}
+		this.moveCount++;
 	}
 }
